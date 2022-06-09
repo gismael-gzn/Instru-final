@@ -5,6 +5,21 @@ import read_interface
 
 import gui
 
+def load_app_imgs(program : gui.gui_program):
+	frameCnt = 44
+	frames = program.get_ref('temp-gif')
+	if not frames:
+		frames = [PhotoImage(file='./icons/term.gif', format='gif -index %i' %(i)) 
+			for i in range(frameCnt)]
+		program.set_ref('temp-gif', frames)
+	
+	bulbFrm = 30
+	lightframs = program.get_ref('light-gif')
+	if not lightframs:
+		lightframs = [PhotoImage(file='./icons/light.gif', format='gif -index %i' %(i)) 
+			for i in range(bulbFrm)]
+		program.set_ref('light-gif', lightframs)
+
 def clear_app_frame(program : gui.gui_program):
 	for widgets in program.get_frame('app').winfo_children():
 		widgets.destroy()
@@ -43,28 +58,40 @@ def monitor_fn(program : gui.gui_program):
 
 	frameCnt = 44
 	frames = program.get_ref('temp-gif')
-	if not frames:
-		frames = [PhotoImage(file='./icons/term.gif', format='gif -index %i' %(i)) 
-			for i in range(frameCnt)]
-		program.set_ref('temp-gif', frames)
+	
+	bulbFrm = 30
+	lightframs = program.get_ref('light-gif')
 
-	data = program.push_to_frame('Temp', Label, text='10')
-	anim = program.def_elem(program.get_frame('Temp'), 'Temp-anim', Label)
-	anim.pack()
-	data.pack()
+	tmpdat = program.push_to_frame('Temp', Label, text='0')
+	tmpanim = program.def_elem(program.get_frame('Temp'), 'Temp-anim', Label)
+	tmpanim.pack()
+	tmpdat.pack()
+
+	lgtdat = program.push_to_frame('Light', Label, text='0')
+	lgtanim = program.def_elem(program.get_frame('Light'), 'Light-anim', Label)
+	lgtanim.pack()
+	lgtdat.pack()
 
 	program.set_state('monitor')
 
 	i = 0
-	reader = read_interface.reader(0, 40)
+	j = 0
+	reader = read_interface.reader(0, 255)
 	while program.get_state() != 'exit':
-		program.root.after(25)
+		program.root.after(10)
+
 		program.get_frame('Temp').update()
-		data.configure(text=f'{i}')
-		anim.configure(image=frames[i])
-		i = reader.read()
-		# i += 1
-		# i = i % frameCnt
+		program.get_frame('Light').update()
+
+		tmpdat.configure(text=f'{i}')
+		tmpanim.configure(image=frames[i])
+
+		lgtdat.configure(text=f'{j}')
+		lgtanim.configure(image=lightframs[j])
+
+		rd = reader.read()
+		i = reader.inrange(frameCnt)
+		j = reader.inrange(bulbFrm)
 
 def ayuda_fn(program : gui.gui_program):
 	if program.get_state() == 'ayuda':
@@ -113,6 +140,8 @@ def main():
 			compound='c', command=f
 			)
 		b.pack(side=TOP)
+		
+	load_app_imgs(program)
 	inicio_fn(program)
 
 	program.start_gui()

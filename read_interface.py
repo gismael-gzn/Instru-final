@@ -23,9 +23,13 @@ class reader(object):
 		return self.range[1]
 
 	def read(self) -> int:
-		self.curr = int(self.file.readline())
+		rd = self.file.readline()
+		if rd:
+			self.curr = int(rd)
+		else:
+			self.curr = self.max()//2
 		return self.curr
 	
 	def inrange(self, rang : int) -> int:
-		return (self.curr // self.max()) * rang
+		return int((self.curr / self.max()) * rang)
 

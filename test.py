@@ -8,7 +8,14 @@ def test(root):
 	elem = Label(root, image=img)
 	elem.pack()
 
+def write_nums():
+	fp = open('nums.txt', 'w')
+	for i in range(255):
+		fp.write(f'{i}\n')
+	fp.close()
+
 def main():
+	write_nums()
 	print('hello world')
 	root = Tk()
 	test(root)
