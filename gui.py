@@ -4,6 +4,7 @@ from tkinter import *
 class gui_program(object):
 	root : Tk
 	frames : dict
+	elems : dict
 	perm_refs: dict
 	sm_state : str
 
@@ -12,6 +13,7 @@ class gui_program(object):
 		self.root.title(title)
 		if(icon_path):
 			self.root.iconphoto(True, PhotoImage(file=os.path.join(sys.path[0], icon_path)))
+		self.elems = dict()
 		self.frames = dict()
 		self.perm_refs = dict()
 		self.sm_state = ''
@@ -22,6 +24,15 @@ class gui_program(object):
 
 		self.log(f'title:{title}, icon_path:{icon_path}, xy:{xy}, {kwargs}' + 
 		f' {id(self.frames["main"])}')
+
+	def def_elem(self, parent, name_id : str, ctor, **kwargs):
+		self.elems[name_id] = ctor(parent, kwargs)
+		return self.elems[name_id]
+
+	def get_elem(self, name_id : str):
+		if name_id in self.elems:
+			return self.elems[name_id]
+		return None
 
 	def def_frame(self, parent, frame_id : str, **kwargs):
 		self.frames[frame_id] = LabelFrame(parent, kwargs)

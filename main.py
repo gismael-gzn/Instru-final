@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter
 from PIL import ImageTk,Image
-import sys,os
+import read_interface
 
 import gui
 
@@ -48,13 +48,23 @@ def monitor_fn(program : gui.gui_program):
 			for i in range(frameCnt)]
 		program.set_ref('temp-gif', frames)
 
-	program.push_to_frame('Temp', Label, image=frames[0]).pack()
-	# while 1:
-	# 	i = i % (frameCnt+1)
-	# 	l.configure(text='hola')
-	# 	l.pack()
+	data = program.push_to_frame('Temp', Label, text='10')
+	anim = program.def_elem(program.get_frame('Temp'), 'Temp-anim', Label)
+	anim.pack()
+	data.pack()
 
 	program.set_state('monitor')
+
+	i = 0
+	reader = read_interface.reader(0, 40)
+	while program.get_state() != 'exit':
+		program.root.after(25)
+		program.get_frame('Temp').update()
+		data.configure(text=f'{i}')
+		anim.configure(image=frames[i])
+		i = reader.read()
+		# i += 1
+		# i = i % frameCnt
 
 def ayuda_fn(program : gui.gui_program):
 	if program.get_state() == 'ayuda':
@@ -65,6 +75,10 @@ def ayuda_fn(program : gui.gui_program):
 	ref.pack()
 
 	program.set_state('ayuda')
+
+def exit_fn(program : gui.gui_program):
+	program.set_state('exit')
+	program.root.quit()
 
 def main():
 	program = gui.gui_program(
@@ -90,7 +104,7 @@ def main():
 	menu_strings = ['Inicio', 'Monitor', 'Ayuda', 'Salir']
 	menu_functors = [
 		lambda p=program: inicio_fn(p), lambda p=program: monitor_fn(p),
-		lambda p=program: ayuda_fn(p), program.root.quit
+		lambda p=program: ayuda_fn(p), lambda p=program: exit_fn(p)
 		]
 	pixel = tkinter.PhotoImage(width=1, height=1)
 	for s,f in  zip(menu_strings, menu_functors):
