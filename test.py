@@ -10,7 +10,7 @@ def test(root):
 
 def write_nums():
 	fp = open('nums.txt', 'w')
-	for i in range(255):
+	for i in range(255, 0, -1):
 		fp.write(f'{i}\n')
 	fp.close()
 
