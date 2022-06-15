@@ -1,35 +1,45 @@
+import serial
 
+adc1 = 0
+adc2 = 0
 
 class reader(object):
-	range : tuple
-	curr : int
-	read_fn : None
-	file : None
+	min : int
+	max : int
+	readlist : list
+	port : serial.Serial
 
-	def __init__(self, min : int, max : int) -> None:
-		self.range = (min, max)
-		self.curr = 0
-		# self.file = open('nums.txt', 'w')
-		# for i in range(44):
-		#     self.file.write(f'{i}\n')
-		# self.file.close()
+	def __init__(self, min:int, max:int) -> None:
+		self.min = min
+		self.max = max
+		self.readlist = [0, 0]
+		self.port = serial.Serial(port="COM3", baudrate=9600, bytesize=8, 
+			timeout=1, stopbits=serial.STOPBITS_ONE)
 
-		self.file = open('nums.txt', 'r')
+	def readtxt(self) -> bytes:
+		# global adc1
+		# global adc2
+		# adc1 %= 255
+		# adc2 %= 255
+		# adc1 += 1
+		# adc2 += 1
+		# return f'{adc1},{adc2}'
+		# return "0,255"
+		return self.port.readline().decode('Ascii')
 
-	def min(self) -> int:
-		return self.range[0]
+	def loadvals(self) -> None:
+		rcv = self.port.readline()
+		txt = rcv.decode('Ascii')
+		vals = txt.split(',')
+		self.readlist[0] = int(vals[0])
+		self.readlist[1] = int(vals[1])
 
-	def max(self) -> int:
-		return self.range[1]
+	def getrd(self, id : int) -> int :
+		return self.readlist[id]
 
-	def read(self) -> int:
-		rd = self.file.readline()
-		if rd:
-			self.curr = int(rd)
-		else:
-			self.curr = self.max()//2
-		return self.curr
-	
-	def inrange(self, rang : int) -> int:
-		return int((self.curr / self.max()) * rang)
+	def poll(self) -> list:
+		self.loadvals()
+		return self.readlist
 
+	def inrange(self, id : int, maxrange : int) -> int:
+		return int((self.getrd(id) / self.max) * (maxrange - 1))

@@ -76,22 +76,24 @@ def monitor_fn(program : gui.gui_program):
 
 	i = 0
 	j = 0
-	reader = read_interface.reader(0, 255)
+	com = read_interface.reader(0, 255)
 	while program.get_state() != 'exit':
-		program.root.after(10)
+		adc = com.poll()
+		i = com.inrange(0, frameCnt)
+		j = com.inrange(1, bulbFrm)
 
+		program.root.after(5)
 		program.get_frame('Temp').update()
 		program.get_frame('Light').update()
 
-		tmpdat.configure(text=f'{i}')
+		VS = [(5/255)*adc[0], (5/255)*adc[1]]
+		VSstr = ['{:.2f}'.format(VS[0]), '{:.2f}'.format(VS[1])]
+
+		tmpdat.configure(text=f'Frame{i}\n\nADC:{adc[0]}\n\nV:{VSstr[0]}')
 		tmpanim.configure(image=frames[i])
 
-		lgtdat.configure(text=f'{j}')
+		lgtdat.configure(text=f'Frame:{j}\n\nADC:{adc[1]}\n\nV:{VSstr[1]}')
 		lgtanim.configure(image=lightframs[j])
-
-		rd = reader.read()
-		i = reader.inrange(frameCnt)
-		j = reader.inrange(bulbFrm)
 
 def ayuda_fn(program : gui.gui_program):
 	if program.get_state() == 'ayuda':
