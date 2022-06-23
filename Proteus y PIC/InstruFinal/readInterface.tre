@@ -1,0 +1,12 @@
+ÀÄreadInterface
+   ÀÄMAIN  0/59  Ram=0
+      ÃÄ@cinit1  (Inline)  Ram=0
+      ÃÄset_adc  0/16  Ram=0
+      ÃÄread_adc_in  0/21  Ram=1
+      ÃÄread_adc_in  0/21  Ram=1
+      ÃÄ@PRINTF_U_9600_62_63  0/56  Ram=2
+      ³  ÃÄ@DIV88  0/21  Ram=3
+      ³  ÀÄ@DIV88  0/21  Ram=3
+      ÃÄ@PRINTF_U_9600_62_63  0/56  Ram=2
+      ³  ÀÄ*
+      ÀÄ@delay_ms1  0/23  Ram=1

@@ -1,0 +1,52 @@
+#include <16f877a.h>
+
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#fuses XT, NOWDT, NOPROTECT
+#use delay (clock=4Mhz)
+#use rs232 (baud=9600, parity=N, xmit=pin_c6, rcv=pin_c7, bits=8)
+
+void leer_sens1(void);
+void leer_sens2(void);
+
+char dato;
+float val;
+
+void set_adc(void)
+{
+    setup_adc_ports(all_analog);
+    setup_adc(adc_clock_internal);
+}
+
+void leer_sens1(void)
+{
+    set_adc_channel(0);
+    delay_us(50);
+    int valint = read_adc();
+    val = (valint*5.0)/1023;
+
+    printf("EL dato del sensor 2: %2.2f >>%u\r\n", val, valint);
+}
+
+void leer_sens2(void)
+{
+    setup_adc_ports(all_analog);
+    setup_adc(adc_clock_internal);
+    set_adc_channel(1);
+    delay_us(50);
+    int valint = read_adc();
+    val = (valint*5.0)/1023;
+}
+
+void main(void)
+{
+    while (true)
+    {
+      uint8_t adc1 = read_adc(), adc2 = read_adc();
+      printf("STRING\r\n");
+      delay_us(10*10000);
+    }
+}
+
